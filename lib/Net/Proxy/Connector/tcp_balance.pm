@@ -25,14 +25,13 @@ __END__
 
 # ABSTRACT: A Net::Proxy connector for outbound tcp balancing and failover
 
-=head1 SYNOPSIS
+=head1 NAME
 
 Net::Proxy::Connector::tcp_balance - connector for outbound tcp balancing and failover
 
 =head1 SYNOPSIS
 
-=over 4
-
+    # sample proxy using Net::Proxy::Connector::tcp_balance
     use Net::Proxy;
     use Net::Proxy::Connector::tcp_balance; # optional
 
@@ -43,18 +42,15 @@ Net::Proxy::Connector::tcp_balance - connector for outbound tcp balancing and fa
             out => { type => 'tcp_balance', hosts => [ 'remotehost1', 'remotehost2' ], port => '9876' },
         }
     );
-
-    # register the proxy object
     $proxy->register();
 
-    # and now proxy connections indefinitely
     Net::Proxy->mainloop();
-
-=back
 
 =head1 DESCRIPTION 
 
 C<Net::Proxy::Connector::tcp_balance> is an outbound tcp connector for C<Net::Proxy> that provides randomized load balancing and also provides failover when outbound tcp hosts are unavailable.
+
+It will randomly connect to one of the specified hosts. If that host is unavailable, it will continue to try the other hosts until it makes a connection.
 
 The capabilities of the C<Net::Proxy::Connector::tcp_balance> are otherwise identical to those C<Net::Proxy::Connector::tcp>
 
