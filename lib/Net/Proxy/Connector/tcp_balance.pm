@@ -11,12 +11,18 @@ use base "Net::Proxy::Connector::tcp";
 sub connect {
     my @params = @_;
     my ($self) = shift @params;
-    for ( sort {int(rand(3))-1} @{$self->{hosts}} ) {
+    my @hosts_sorted = sort {int(rand(3))-1} @{$self->{hosts}};
+    if ( $self->{sort} and $self->{sort} eq 'order' ){
+        @hosts_sorted = sort @{$self->{hosts}};
+    }
+    elsif ( $self->{sort} and $self->{sort} eq 'none' ){
+        @hosts_sorted = @{$self->{hosts}};
+    }
+    for ( @hosts_sorted ) {
         $self->{host} = $_;
         my $sock = eval { $self->SUPER::connect(@params); };
         return $sock if $sock;
     }
-
 }
 
 1;
@@ -83,6 +89,10 @@ The remote hosts.  An array ref.
 =item * port
 
 The remote port.
+
+=item * sort
+
+(Optional) Connect to the hosts in sort algorithm.  Possible values: order, none, random.  Default is random.
 
 =item * timeout
 
