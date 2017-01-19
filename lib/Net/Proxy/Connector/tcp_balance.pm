@@ -21,8 +21,13 @@ sub connect {
     for ( @hosts_sorted ) {
         $self->{host} = $_;
         my $sock = eval { $self->SUPER::connect(@params); };
+        if ($@) { # connect() dies if the connection fails
+            warn "tcp_balance failed to connect to ".$self->{host} ." '$@'\n";
+            next;
+        }
         return $sock if $sock;
     }
+    die "tcp_balance failed all hosts";
 }
 
 1;
