@@ -31,7 +31,7 @@ docker build -t dzil-npctb .
 # - delete the container when done
 # effectively this is running "dzil @args" inside the container
 echo "$0 ... running docker container"
-docker run --rm -v $PWD:/project dzil-npctb $@
+docker run -it --rm -v $PWD:/project dzil-npctb $@
 
 # clean up the temporary Dockerfile
 rm Dockerfile
