@@ -1,6 +1,7 @@
-Revision history for {{$dist->name}}
+Revision history for Net-Proxy-Connector-tcp_balance
 
-{{$NEXT}}
+0.005     2017-01-19 18:28:32+00:00 UTC
+          - update meta resources
 
 0.004     2017-01-19 17:59:33+00:00 UTC
           - fixed bug where socket filehandles are left open when all hosts are not responding
