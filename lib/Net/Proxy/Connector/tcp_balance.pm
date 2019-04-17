@@ -18,16 +18,18 @@ sub connect {
     elsif ( $self->{sort} and $self->{sort} eq 'none' ){
         @hosts_sorted = @{$self->{hosts}};
     }
+    warn "[ ".localtime." ] tcp_balance hosts_sorted are: ".join(',', @hosts_sorted)."\n" if $self->{verbose};
     for ( @hosts_sorted ) {
         $self->{host} = $_;
         my $sock = eval { $self->SUPER::connect(@params); };
         if ($@) { # connect() dies if the connection fails
-            warn "tcp_balance failed to connect to ".$self->{host} ." '$@'\n";
+            warn "[ ".localtime." ] tcp_balance failed to connect to ".$self->{host} ." '$@'\n";
             next;
         }
+        warn "[ ".localtime." ] tcp_balance connected to ".$self->{host} ." '$@'\n" if $self->{verbose};
         return $sock if $sock;
     }
-    die "tcp_balance failed all hosts";
+    die "[ ".localtime." ] tcp_balance failed all hosts";
 }
 
 1;
@@ -50,14 +52,14 @@ Net::Proxy::Connector::tcp_balance - connector for outbound tcp balancing and fa
     # using standard TCP connections
     my $proxy = Net::Proxy->new(
         {   in  => { type => 'tcp', port => '6789' },
-            out => { type => 'tcp_balance', hosts => [ 'remotehost1', 'remotehost2' ], port => '9876' },
+            out => { type => 'tcp_balance', hosts => [ 'remotehost1', 'remotehost2' ], port => '9876', verbose => 1 },
         }
     );
     $proxy->register();
 
     Net::Proxy->mainloop();
 
-=head1 DESCRIPTION 
+=head1 DESCRIPTION
 
 C<Net::Proxy::Connector::tcp_balance> is an outbound tcp connector for C<Net::Proxy> that provides randomized load balancing and also provides failover when outbound tcp hosts are unavailable.
 
@@ -89,7 +91,7 @@ The listening port.
 
 =item * hosts
 
-The remote hosts.  An array ref. 
+The remote hosts.  An array ref.
 
 =item * port
 
@@ -102,6 +104,10 @@ The remote port.
 =item * timeout
 
 The socket timeout for connection (C<out> only).
+
+=item * verbose
+
+(Optional) Will print to STDERR the list of sorted hosts for every request.
 
 =back
 
